@@ -1,0 +1,1043 @@
+--  ============================================================
+-- WHOOP PREMIUM - ULTIMATE UI (OPTIMIZED LAG-FREE EDITION)
+-- Theme: Black & Dynamic RGB Minimalist Premium
+-- Owner: Ucenucunacan13
+-- ============================================================
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+local TextChatService = game:GetService("TextChatService")
+local StarterGui = game:GetService("StarterGui")
+
+local LocalPlayer = Players.LocalPlayer
+local OWNER_NAME = "Ucenucunacan13"
+
+-- Clean up Old UIs safely
+if CoreGui:FindFirstChild("ShadowHubUI") then CoreGui.ShadowHubUI:Destroy() end
+if CoreGui:FindFirstChild("ShadowGMUI") then CoreGui.ShadowGMUI:Destroy() end
+if CoreGui:FindFirstChild("EaterUI") then CoreGui.EaterUI:Destroy() end
+if CoreGui:FindFirstChild("ShadowAutoHealUI") then CoreGui.ShadowAutoHealUI:Destroy() end
+if CoreGui:FindFirstChild("ShadowFastAutoEatUI") then CoreGui.ShadowFastAutoEatUI:Destroy() end
+if CoreGui:FindFirstChild("VoxelKillAura") then CoreGui.VoxelKillAura:Destroy() end
+if CoreGui:FindFirstChild("ShadowHubGuiSystem") then CoreGui.ShadowHubGuiSystem:Destroy() end
+if CoreGui:FindFirstChild("XhunterXHubGui") then CoreGui.XhunterXHubGui:Destroy() end
+if CoreGui:FindFirstChild("ShadowHubUltra") then CoreGui.ShadowHubUltra:Destroy() end
+if CoreGui:FindFirstChild("ShadowHubTriple") then CoreGui.ShadowHubTriple:Destroy() end
+if CoreGui:FindFirstChild("EaterUI_V12_Fixed") then CoreGui.EaterUI_V12_Fixed:Destroy() end
+if CoreGui:FindFirstChild("AutoHealUI") then CoreGui.AutoHealUI:Destroy() end
+
+-- Cleanup old Dupe Mode connections if any
+if _G.a then
+    for _, v in pairs(_G.a) do
+        v:Disconnect()
+    end
+    _G.a = nil
+end
+
+-- Optimized Dynamic Rainbow RGB Color Generator (Zero lag tick limiter)
+local rgbColor = Color3.new(1, 1, 1)
+local lastUpdate = 0
+RunService.Heartbeat:Connect(function()
+    local t = tick()
+    if t - lastUpdate >= 0.05 then
+        lastUpdate = t
+        local hue = (t % 5) / 5
+        rgbColor = Color3.fromHSV(hue, 1, 1)
+    end
+end)
+
+-- Notification System
+local function sendChatNotification(msg)
+    pcall(function()
+        if TextChatService and TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            local textChannel = TextChatService.TextChannels.RBXGeneral
+            if textChannel then
+                textChannel:SendAsync(msg)
+            end
+        else
+            StarterGui:SetCore("ChatMakeSystemMessage", {
+                Text = msg,
+                Color = rgbColor,
+                Font = Enum.Font.SourceSansBold,
+                FontSize = Enum.FontSize.Size18
+            })
+        end
+    end)
+end
+
+sendChatNotification("Whoop SCRIPT HERE!")
+
+local function notifyToggle(featureName, state)
+    local stateText = state and "ACTIVATED" or "DEACTIVATED"
+    sendChatNotification("WhoopScript" .. featureName .. " is " .. stateText)
+end
+
+-- ============================================================
+-- GLOBAL VARIABLES & UTILITIES
+-- ============================================================
+local lastDeathPosition = nil
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    local hum = char:WaitForChild("Humanoid", 5)
+    if hum then
+        hum.Died:Connect(function()
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                lastDeathPosition = hrp.CFrame
+            end
+        end)
+    end
+end)
+
+local function isOwnerOnline()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Name == OWNER_NAME or player.DisplayName == OWNER_NAME then
+            return true
+        end
+    end
+    return false
+end
+
+-- ============================================================
+-- MAIN UI CREATION (COMPACT SQUARE & RGB THEME)
+-- ============================================================
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ShadowHubUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = CoreGui
+
+local OpenCloseBtn = Instance.new("TextButton")
+OpenCloseBtn.Name = "OpenCloseToggle"
+OpenCloseBtn.Size = UDim2.new(0, 45, 0, 45)
+OpenCloseBtn.Position = UDim2.new(0.02, 0, 0.5, -22)
+OpenCloseBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+OpenCloseBtn.Text = "ITZ"
+OpenCloseBtn.TextSize = 14
+OpenCloseBtn.Font = Enum.Font.GothamBold
+OpenCloseBtn.Active = true
+OpenCloseBtn.Draggable = true
+OpenCloseBtn.Parent = ScreenGui
+
+RunService.Heartbeat:Connect(function()
+    OpenCloseBtn.TextColor3 = rgbColor
+end)
+
+local OpenBtnCorner = Instance.new("UICorner")
+OpenBtnCorner.CornerRadius = UDim.new(1, 0)
+OpenBtnCorner.Parent = OpenCloseBtn
+
+local OpenBtnStroke = Instance.new("UIStroke")
+OpenBtnStroke.Thickness = 2.5
+OpenBtnStroke.Parent = OpenCloseBtn
+RunService.Heartbeat:Connect(function()
+    OpenBtnStroke.Color = rgbColor
+end)
+
+-- Compact Square Main Frame (500 x 300)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 500, 0, 300)
+MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+
+OpenCloseBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 8)
+MainCorner.Parent = MainFrame
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Thickness = 1.5
+MainStroke.Parent = MainFrame
+RunService.Heartbeat:Connect(function()
+    MainStroke.Color = rgbColor
+end)
+
+-- Top Bar Header
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+local TopBarCorner = Instance.new("UICorner")
+TopBarCorner.CornerRadius = UDim.new(0, 8)
+TopBarCorner.Parent = TopBar
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Size = UDim2.new(0, 190, 1, 0)
+TitleLabel.Position = UDim2.new(0, 12, 0, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Text = "WHOOP SCRIPT V2"
+TitleLabel.TextSize = 14
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.Parent = TopBar
+RunService.Heartbeat:Connect(function()
+    TitleLabel.TextColor3 = rgbColor
+end)
+
+local OwnerStatusLabel = Instance.new("TextLabel")
+OwnerStatusLabel.Size = UDim2.new(0, 240, 1, 0)
+OwnerStatusLabel.Position = UDim2.new(1, -250, 0, 0)
+OwnerStatusLabel.BackgroundTransparency = 1
+OwnerStatusLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+OwnerStatusLabel.TextSize = 11
+OwnerStatusLabel.Font = Enum.Font.GothamBold
+OwnerStatusLabel.TextXAlignment = Enum.TextXAlignment.Right
+OwnerStatusLabel.Parent = TopBar
+
+if isOwnerOnline() then
+    OwnerStatusLabel.Text = "OWNER IS ONLINE 👑 " .. OWNER_NAME
+else
+    OwnerStatusLabel.Text = "OWNER: " .. OWNER_NAME .. " (Offline)"
+end
+
+-- Sidebar Navigation
+local Sidebar = Instance.new("Frame")
+Sidebar.Size = UDim2.new(0, 130, 1, -40)
+Sidebar.Position = UDim2.new(0, 5, 0, 37)
+Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Sidebar.BorderSizePixel = 0
+Sidebar.Parent = MainFrame
+
+local SidebarCorner = Instance.new("UICorner")
+SidebarCorner.CornerRadius = UDim.new(0, 6)
+SidebarCorner.Parent = Sidebar
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Padding = UDim.new(0, 4)
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+UIListLayout.Parent = Sidebar
+
+-- Content Display Area
+local ContentArea = Instance.new("Frame")
+ContentArea.Size = UDim2.new(1, -140, 1, -40)
+ContentArea.Position = UDim2.new(0, 138, 0, 37)
+ContentArea.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+ContentArea.BorderSizePixel = 0
+ContentArea.Parent = MainFrame
+
+local ContentCorner = Instance.new("UICorner")
+ContentCorner.CornerRadius = UDim.new(0, 6)
+ContentCorner.Parent = ContentArea
+
+-- Tabs Container
+local Tabs = {}
+local function createTab(tabName, layoutOrder)
+    local TabButton = Instance.new("TextButton")
+    TabButton.Size = UDim2.new(1, 0, 0, 30)
+    TabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TabButton.Text = " " .. tabName
+    TabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TabButton.TextSize = 11
+    TabButton.Font = Enum.Font.GothamMedium
+    TabButton.TextXAlignment = Enum.TextXAlignment.Left
+    TabButton.LayoutOrder = layoutOrder
+    TabButton.Parent = Sidebar
+
+    local BtnCorner = Instance.new("UICorner")
+    BtnCorner.CornerRadius = UDim.new(0, 4)
+    BtnCorner.Parent = TabButton
+
+    local TabPage = Instance.new("ScrollingFrame")
+    TabPage.Size = UDim2.new(1, -6, 1, -6)
+    TabPage.Position = UDim2.new(0, 3, 0, 3)
+    TabPage.BackgroundTransparency = 1
+    TabPage.BorderSizePixel = 0
+    TabPage.Visible = false
+    TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
+    TabPage.AutomaticCanvasSize = Enum.AutomaticSize.Y
+    TabPage.ScrollBarThickness = 3
+    TabPage.Parent = ContentArea
+
+    local PageList = Instance.new("UIListLayout")
+    PageList.Padding = UDim.new(0, 6)
+    PageList.SortOrder = Enum.SortOrder.LayoutOrder
+    PageList.Parent = TabPage
+
+    TabButton.MouseButton1Click:Connect(function()
+        for _, tabData in pairs(Tabs) do
+            tabData.Page.Visible = false
+            tabData.Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            tabData.Button.TextColor3 = Color3.fromRGB(200, 200, 200)
+        end
+        TabPage.Visible = true
+        TabButton.BackgroundColor3 = rgbColor
+        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end)
+
+    Tabs[tabName] = {Button = TabButton, Page = TabPage, Name = tabName}
+    return TabPage
+end
+
+-- Create Tabs
+local TabPlayerInfo = createTab("👤 Player Info", 1)
+local TabCombat = createTab("⚔️ Combat", 2)
+local TabAutoEat = createTab("🍗 Auto Fast Eat", 3)
+local TabUtility = createTab("🏃 Utilities", 4)
+local TabLinks = createTab("🔗 Links", 5)
+
+Tabs["👤 Player Info"].Page.Visible = true
+Tabs["👤 Player Info"].Button.BackgroundColor3 = rgbColor
+Tabs["👤 Player Info"].Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+RunService.Heartbeat:Connect(function()
+    for _, tabData in pairs(Tabs) do
+        if tabData.Page.Visible then
+            tabData.Button.BackgroundColor3 = rgbColor
+        end
+    end
+end)
+
+-- Helper: UI Toggle Creator
+local function createToggle(parentPage, text, callback)
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(1, -6, 0, 35)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.Parent = parentPage
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 6)
+    Corner.Parent = Frame
+
+    local Label = Instance.new("TextLabel")
+    Label.Size = UDim2.new(0.65, 0, 1, 0)
+    Label.Position = UDim2.new(0, 8, 0, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = text
+    Label.TextColor3 = Color3.fromRGB(240, 240, 240)
+    Label.TextSize = 11
+    Label.Font = Enum.Font.GothamMedium
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Parent = Frame
+
+    local ToggleBtn = Instance.new("TextButton")
+    ToggleBtn.Size = UDim2.new(0, 45, 0, 22)
+    ToggleBtn.Position = UDim2.new(1, -52, 0.5, -11)
+    ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ToggleBtn.Text = "⚡"
+    ToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    ToggleBtn.Font = Enum.Font.GothamBold
+    ToggleBtn.TextSize = 14
+    ToggleBtn.Parent = Frame
+
+    local BtnStroke = Instance.new("UIStroke")
+    BtnStroke.Thickness = 1.2
+    BtnStroke.Parent = ToggleBtn
+    
+    RunService.Heartbeat:Connect(function()
+        BtnStroke.Color = rgbColor
+    end)
+
+    local BtnCorner = Instance.new("UICorner")
+    BtnCorner.CornerRadius = UDim.new(0, 11)
+    BtnCorner.Parent = ToggleBtn
+
+    local state = false
+    ToggleBtn.MouseButton1Click:Connect(function()
+        state = not state
+        if state then
+            ToggleBtn.BackgroundColor3 = rgbColor
+            ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleBtn.Text = "⚔️"
+        else
+            ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            ToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            ToggleBtn.Text = "⚡"
+        end
+        callback(state)
+    end)
+end
+
+-- ============================================================
+-- TAB 1: PLAYER INFO & OWNER BANNER
+-- ============================================================
+local ProfileCard = Instance.new("Frame")
+ProfileCard.Size = UDim2.new(1, -6, 0, 95)
+ProfileCard.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ProfileCard.Parent = TabPlayerInfo
+
+local CardCorner = Instance.new("UICorner")
+CardCorner.CornerRadius = UDim.new(0, 6)
+CardCorner.Parent = ProfileCard
+
+local AvatarImg = Instance.new("ImageLabel")
+AvatarImg.Size = UDim2.new(0, 65, 0, 65)
+AvatarImg.Position = UDim2.new(0, 12, 0.5, -32)
+AvatarImg.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+AvatarImg.Parent = ProfileCard
+
+local ImgCorner = Instance.new("UICorner")
+ImgCorner.CornerRadius = UDim.new(1, 0)
+ImgCorner.Parent = AvatarImg
+
+pcall(function()
+    local content = Players:GetUserThumbnailAsync(
+        LocalPlayer.UserId,
+        Enum.ThumbnailType.HeadShot,
+        Enum.ThumbnailSize.Size100x100
+    )
+    AvatarImg.Image = content
+end)
+
+local function createEatToggleUI(parentTab, titleText, batchSize)
+    local Frame = Instance.new("Frame")
+    Frame.Size = UDim2.new(1, -6, 0, 40)
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Frame.Parent = parentTab
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 6)
+
+    local Label = Instance.new("TextLabel")
+    Label.Size = UDim2.new(0.65, 0, 1, 0)
+    Label.Position = UDim2.new(0, 8, 0, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = titleText
+    Label.TextColor3 = Color3.fromRGB(240, 240, 240)
+    Label.TextSize = 11
+    Label.Font = Enum.Font.GothamMedium
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.Parent = Frame
+
+    local ToggleBtn = Instance.new("TextButton")
+    ToggleBtn.Size = UDim2.new(0, 45, 0, 22)
+    ToggleBtn.Position = UDim2.new(1, -52, 0.5, -11)
+    ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ToggleBtn.Text = "⚡"
+    ToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    ToggleBtn.Font = Enum.Font.GothamBold
+    ToggleBtn.TextSize = 14
+    ToggleBtn.Parent = Frame
+    Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 11)
+
+    local isRunning = false
+    local connection = nil
+    local slotIdx = 1
+
+    ToggleBtn.MouseButton1Click:Connect(function()
+        isRunning = not isRunning
+        if isRunning then
+            ToggleBtn.BackgroundColor3 = rgbColor
+            ToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ToggleBtn.Text = "🍗"
+            connection = RunService.Heartbeat:Connect(function()
+                if SharedConsume then
+                    for i = 1, batchSize do
+                        task.spawn(function()
+                            pcall(function()
+                                SharedConsume:InvokeServer(slotIdx)
+                            end)
+                        end)
+                        slotIdx = slotIdx + 1
+                        if slotIdx > 36 then slotIdx = 1 end
+                    end
+                end
+            end)
+            sendChatNotification(titleText .. " Activated!")
+        else
+            ToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            ToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+            ToggleBtn.Text = "⚡"
+            if connection then
+                connection:Disconnect()
+                connection = nil
+            end
+            sendChatNotification(titleText .. " Deactivated!")
+        end
+    end)
+end
+
+createEatToggleUI(TabAutoEat, "🍗 Whoop Fast Eat (Batch 6)", 6)
+createEatToggleUI(TabAutoEat, "👑 Ultra God Fast Eat (Batch 10)", 10)
+createEatToggleUI(TabAutoEat, "🛡️ Whoop Auto Heal (Batch 12)", 12)
+
+
+-- ============================================================
+-- TAB 4: UTILITIES
+-- ============================================================
+
+-- 1. WhoopSC DUPE MODE
+local DupeFrame = Instance.new("Frame")
+DupeFrame.Size = UDim2.new(1, -6, 0, 50)
+DupeFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+DupeFrame.Parent = TabUtility
+Instance.new("UICorner", DupeFrame).CornerRadius = UDim.new(0, 6)
+
+local DupeLabel = Instance.new("TextLabel")
+DupeLabel.Size = UDim2.new(0.6, 0, 1, 0)
+DupeLabel.Position = UDim2.new(0, 8, 0, 0)
+DupeLabel.BackgroundTransparency = 1
+DupeLabel.Text = "🛡️ WHOOPSC DUPE MODE"
+DupeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+DupeLabel.TextSize = 11
+DupeLabel.Font = Enum.Font.GothamBold
+DupeLabel.TextXAlignment = Enum.TextXAlignment.Left
+DupeLabel.Parent = DupeFrame
+
+local DupeToggleBtn = Instance.new("TextButton")
+DupeToggleBtn.Size = UDim2.new(0, 45, 0, 22)
+DupeToggleBtn.Position = UDim2.new(1, -52, 0.5, -11)
+DupeToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+DupeToggleBtn.Text = "⚡"
+DupeToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+DupeToggleBtn.Font = Enum.Font.GothamBold
+DupeToggleBtn.TextSize = 14
+DupeToggleBtn.Parent = DupeFrame
+Instance.new("UICorner", DupeToggleBtn).CornerRadius = UDim.new(0, 11)
+
+local DupeStroke = Instance.new("UIStroke")
+DupeStroke.Thickness = 1.2
+DupeStroke.Parent = DupeToggleBtn
+RunService.RenderStepped:Connect(function()
+    DupeStroke.Color = rgbColor
+end)
+
+local isDupeEnabled = false
+local dupeParts = {}
+local dupeRootPart, dupeHumanoid
+
+local function updateDupeData()
+    local c = LocalPlayer.Character
+    if c then
+        dupeRootPart = c:FindFirstChild("HumanoidRootPart")
+        dupeHumanoid = c:FindFirstChildOfClass("Humanoid")
+        dupeParts = {}
+        for _, v in pairs(c:GetDescendants()) do
+            if v:IsA("BasePart") and v.Transparency == 0 then
+                table.insert(dupeParts, v)
+            end
+        end
+    end
+end
+
+LocalPlayer.CharacterAdded:Connect(function(newChar)
+    newChar:WaitForChild("HumanoidRootPart", 5)
+    isDupeEnabled = false
+    DupeToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    DupeToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+    DupeToggleBtn.Text = "⚡"
+    task.wait(1)
+    updateDupeData()
+end)
+updateDupeData()
+
+local function toggleDupeMode()
+    isDupeEnabled = not isDupeEnabled
+    if isDupeEnabled then
+        DupeToggleBtn.BackgroundColor3 = rgbColor
+        DupeToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        DupeToggleBtn.Text = "⚔️"
+    else
+        DupeToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        DupeToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        DupeToggleBtn.Text = "⚡"
+    end
+    for _, v in pairs(dupeParts) do
+        if v and v.Parent then
+            v.Transparency = isDupeEnabled and 0.5 or 0
+        end
+    end
+    notifyToggle("WhoopSC Dupe Mode", isDupeEnabled)
+end
+
+DupeToggleBtn.MouseButton1Click:Connect(toggleDupeMode)
+
+local dupeConnections = {}
+pcall(function()
+    dupeConnections[1] = LocalPlayer:GetMouse().KeyDown:Connect(function(key)
+        if key:lower() == "g" then toggleDupeMode() end
+    end)
+end)
+
+dupeConnections[2] = RunService.Heartbeat:Connect(function()
+    if isDupeEnabled and dupeRootPart and dupeHumanoid then
+        local oldCF = dupeRootPart.CFrame
+        local oldOffset = dupeHumanoid.CameraOffset
+        local hideCF = oldCF * CFrame.new(0, -200000, 0)
+        dupeRootPart.CFrame = hideCF
+        dupeHumanoid.CameraOffset = hideCF:ToObjectSpace(CFrame.new(oldCF.Position)).Position
+        RunService.RenderStepped:Wait()
+        dupeRootPart.CFrame = oldCF
+        dupeHumanoid.CameraOffset = oldOffset
+    end
+end)
+_G.a = dupeConnections
+
+
+-- 2. Z-FLY CONTROL
+local zFlyFlying = false
+local moveForward, moveBackward, moveLeft, moveRight = false, false, false, false
+local zFlyBodyVelocity, zFlyBodyGyro
+
+local remoteFrame = Instance.new("Frame")
+remoteFrame.Name = "ZFlyRemoteFrame"
+remoteFrame.Size = UDim2.new(0, 140, 0, 140)
+remoteFrame.Position = UDim2.new(0.05, 0, 0.4, 0)
+remoteFrame.BackgroundTransparency = 0.5
+remoteFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+remoteFrame.BorderSizePixel = 0
+remoteFrame.Active = true
+remoteFrame.Draggable = true
+remoteFrame.Visible = false
+remoteFrame.Parent = ScreenGui
+Instance.new("UICorner", remoteFrame).CornerRadius = UDim.new(0, 10)
+
+local function createDpadBtn(name, size, pos, text)
+    local btn = Instance.new("TextButton")
+    btn.Name = name
+    btn.Size = size
+    btn.Position = pos
+    btn.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Text = text
+    btn.TextSize = 14
+    btn.Font = Enum.Font.SourceSansBold
+    btn.Parent = remoteFrame
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    return btn
+end
+
+local btnUp = createDpadBtn("Up", UDim2.new(0, 40, 0, 40), UDim2.new(0.5, -20, 0.05, 0), "^")
+local btnDown = createDpadBtn("Down", UDim2.new(0, 40, 0, 40), UDim2.new(0.5, -20, 0.60, 0), "v")
+local btnLeft = createDpadBtn("Left", UDim2.new(0, 40, 0, 40), UDim2.new(0.05, 0, 0.32, 0), "<")
+local btnRight = createDpadBtn("Right", UDim2.new(0, 40, 0, 40), UDim2.new(0.65, 0, 0.32, 0), ">")
+
+btnUp.MouseButton1Down:Connect(function() moveForward = true end)
+btnUp.MouseButton1Up:Connect(function() moveForward = false end)
+btnDown.MouseButton1Down:Connect(function() moveBackward = true end)
+btnDown.MouseButton1Up:Connect(function() moveBackward = false end)
+btnLeft.MouseButton1Down:Connect(function() moveLeft = true end)
+btnLeft.MouseButton1Up:Connect(function() moveLeft = false end)
+btnRight.MouseButton1Down:Connect(function() moveRight = true end)
+btnRight.MouseButton1Up:Connect(function() moveRight = false end)
+
+local ZFlyFrame = Instance.new("Frame")
+ZFlyFrame.Size = UDim2.new(1, -6, 0, 65)
+ZFlyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ZFlyFrame.Parent = TabUtility
+Instance.new("UICorner", ZFlyFrame).CornerRadius = UDim.new(0, 6)
+
+local ZFlyLabel = Instance.new("TextLabel")
+ZFlyLabel.Size = UDim2.new(0.6, 0, 0, 25)
+ZFlyLabel.Position = UDim2.new(0, 8, 0, 4)
+ZFlyLabel.BackgroundTransparency = 1
+ZFlyLabel.Text = "✈️ Z-FLY CONTROL"
+ZFlyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+ZFlyLabel.TextSize = 11
+ZFlyLabel.Font = Enum.Font.GothamBold
+ZFlyLabel.TextXAlignment = Enum.TextXAlignment.Left
+ZFlyLabel.Parent = ZFlyFrame
+
+local ZFlyToggleBtn = Instance.new("TextButton")
+ZFlyToggleBtn.Size = UDim2.new(0, 90, 0, 22)
+ZFlyToggleBtn.Position = UDim2.new(1, -96, 0, 5)
+ZFlyToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
+ZFlyToggleBtn.Text = "Z-FLY: ⚡"
+ZFlyToggleBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+ZFlyToggleBtn.Font = Enum.Font.GothamBold
+ZFlyToggleBtn.TextSize = 10
+ZFlyToggleBtn.Parent = ZFlyFrame
+Instance.new("UICorner", ZFlyToggleBtn).CornerRadius = UDim.new(0, 11)
+
+local ZFlySpeedBox = Instance.new("TextBox")
+ZFlySpeedBox.Size = UDim2.new(1, -16, 0, 24)
+ZFlySpeedBox.Position = UDim2.new(0, 8, 0, 34)
+ZFlySpeedBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+ZFlySpeedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ZFlySpeedBox.Text = "100"
+ZFlySpeedBox.TextSize = 11
+ZFlySpeedBox.Font = Enum.Font.GothamBold
+ZFlySpeedBox.PlaceholderText = "Fly Speed"
+ZFlySpeedBox.Parent = ZFlyFrame
+Instance.new("UICorner", ZFlySpeedBox).CornerRadius = UDim.new(0, 4)
+
+ZFlyToggleBtn.MouseButton1Click:Connect(function()
+    zFlyFlying = not zFlyFlying
+    remoteFrame.Visible = zFlyFlying
+    local char = LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local hrp = char.HumanoidRootPart
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    
+    if zFlyFlying then
+        ZFlyToggleBtn.Text = "Z-FLY: ⚔️"
+        ZFlyToggleBtn.TextColor3 = Color3.fromRGB(100, 255, 100)
+        zFlyBodyVelocity = Instance.new("BodyVelocity")
+        zFlyBodyVelocity.Velocity = Vector3.zero
+        zFlyBodyVelocity.MaxForce = Vector3.new(400000, 400000, 400000)
+        zFlyBodyVelocity.Parent = hrp
+        zFlyBodyGyro = Instance.new("BodyGyro")
+        zFlyBodyGyro.P = 10000
+        zFlyBodyGyro.MaxTorque = Vector3.new(400000, 400000, 400000)
+        zFlyBodyGyro.CFrame = hrp.CFrame
+        zFlyBodyGyro.Parent = hrp
+        if humanoid then humanoid.PlatformStand = true end
+    else
+        ZFlyToggleBtn.Text = "Z-FLY: ⚡"
+        ZFlyToggleBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+        if zFlyBodyVelocity then zFlyBodyVelocity:Destroy() end
+        if zFlyBodyGyro then zFlyBodyGyro:Destroy() end
+        if humanoid then 
+            humanoid.PlatformStand = false 
+            humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        end
+    end
+    notifyToggle("Z-Fly", zFlyFlying)
+end)
+
+RunService.RenderStepped:Connect(function()
+    if zFlyFlying and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        local camera = workspace.CurrentCamera
+        local moveDir = Vector3.zero
+        if moveForward then moveDir = moveDir + camera.CFrame.LookVector end
+        if moveBackward then moveDir = moveDir - camera.CFrame.LookVector end
+        if moveLeft then moveDir = moveDir - camera.CFrame.RightVector end
+        if moveRight then moveDir = moveDir + camera.CFrame.RightVector end
+        local currentSpeed = tonumber(ZFlySpeedBox.Text) or 100
+        if zFlyBodyVelocity and zFlyBodyGyro then
+            zFlyBodyVelocity.Velocity = moveDir * currentSpeed
+            zFlyBodyGyro.CFrame = camera.CFrame
+        end
+    end
+end)
+
+- 3. SPEED MODIFIER
+local speedEnabled = false
+local targetSpeed = 50
+
+local SpeedFrame = Instance.new("Frame")
+SpeedFrame.Size = UDim2.new(1, -6, 0, 65)
+SpeedFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+SpeedFrame.Parent = TabUtility
+Instance.new("UICorner", SpeedFrame).CornerRadius = UDim.new(0, 6)
+
+local SpeedLabelTxt = Instance.new("TextLabel")
+SpeedLabelTxt.Size = UDim2.new(0.6, 0, 0, 25)
+SpeedLabelTxt.Position = UDim2.new(0, 8, 0, 4)
+SpeedLabelTxt.BackgroundTransparency = 1
+SpeedLabelTxt.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+SpeedLabelTxt.TextColor3 = Color3.fromRGB(255, 255, 255)
+SpeedLabelTxt.TextSize = 11
+SpeedLabelTxt.Font = Enum.Font.GothamBold
+SpeedLabelTxt.TextXAlignment = Enum.TextXAlignment.Left
+SpeedLabelTxt.Parent = SpeedFrame
+
+local SpeedToggleBtn = Instance.new("TextButton")
+SpeedToggleBtn.Size = UDim2.new(0, 45, 0, 22)
+SpeedToggleBtn.Position = UDim2.new(1, -52, 0, 5)
+SpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+SpeedToggleBtn.Text = "⚡"
+SpeedToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+SpeedToggleBtn.Font = Enum.Font.GothamBold
+SpeedToggleBtn.TextSize = 14
+SpeedToggleBtn.Parent = SpeedFrame
+Instance.new("UICorner", SpeedToggleBtn).CornerRadius = UDim.new(0, 11)
+
+SpeedToggleBtn.MouseButton1Click:Connect(function()
+    speedEnabled = not speedEnabled
+    if speedEnabled then
+        SpeedToggleBtn.BackgroundColor3 = rgbColor
+        SpeedToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SpeedToggleBtn.Text = "⚔️"
+    else
+        SpeedToggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        SpeedToggleBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+        SpeedToggleBtn.Text = "⚡"
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+            LocalPlayer.Character:FindFirstChildOfClass("Humanoid").WalkSpeed = 16
+        end
+    end
+    notifyToggle("Speed Hack", speedEnabled)
+end)
+
+local BtnMinus = Instance.new("TextButton")
+BtnMinus.Size = UDim2.new(0, 35, 0, 22)
+BtnMinus.Position = UDim2.new(0, 8, 0, 34)
+BtnMinus.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+BtnMinus.Text = "-10"
+BtnMinus.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnMinus.Font = Enum.Font.GothamBold
+BtnMinus.TextSize = 10
+BtnMinus.Parent = SpeedFrame
+Instance.new("UICorner", BtnMinus).CornerRadius = UDim.new(0, 4)
+
+local BtnPlus = Instance.new("TextButton")
+BtnPlus.Size = UDim2.new(0, 35, 0, 22)
+BtnPlus.Position = UDim2.new(0, 48, 0, 34)
+BtnPlus.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+BtnPlus.Text = "+10"
+BtnPlus.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnPlus.Font = Enum.Font.GothamBold
+BtnPlus.TextSize = 10
+BtnPlus.Parent = SpeedFrame
+Instance.new("UICorner", BtnPlus).CornerRadius = UDim.new(0, 4)
+
+local BtnMax = Instance.new("TextButton")
+BtnMax.Size = UDim2.new(0, 65, 0, 22)
+BtnMax.Position = UDim2.new(0, 88, 0, 34)
+BtnMax.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+BtnMax.Text = "Set 100"
+BtnMax.TextColor3 = Color3.fromRGB(255, 255, 255)
+BtnMax.Font = Enum.Font.GothamBold
+BtnMax.TextSize = 10
+BtnMax.Parent = SpeedFrame
+Instance.new("UICorner", BtnMax).CornerRadius = UDim.new(0, 4)
+
+BtnMinus.MouseButton1Click:Connect(function()
+    targetSpeed = math.max(16, targetSpeed - 10)
+    SpeedLabelTxt.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+end)
+
+BtnPlus.MouseButton1Click:Connect(function()
+    targetSpeed = targetSpeed + 10
+    SpeedLabelTxt.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+end)
+
+BtnMax.MouseButton1Click:Connect(function()
+    targetSpeed = 100
+    SpeedLabelTxt.Text = "⚡ WalkSpeed: " .. tostring(targetSpeed)
+end)
+
+RunService.RenderStepped:Connect(function()
+    if speedEnabled and LocalPlayer.Character then
+        local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then hum.WalkSpeed = targetSpeed end
+    end
+end)
+
+
+-- 4. NOCLIP
+local noclipEnabled = false
+RunService.Stepped:Connect(function()
+    if noclipEnabled and LocalPlayer.Character then
+        for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+createToggle(TabUtility, "Noclip", function(state)
+    noclipEnabled = state
+    notifyToggle("Noclip", state)
+end)
+
+
+-- 5. NO FALL DAMAGE & GOD MODE (Integrated)
+local godModeEnabled = false
+local godModeConnection = nil
+
+createToggle(TabUtility, "🛡️ No Fall Damage & God Mode", function(state)
+    godModeEnabled = state
+    if state then
+        pcall(function()
+            local combatNetwork = ReplicatedStorage:FindFirstChild("Systems")
+                and ReplicatedStorage.Systems:FindFirstChild("CombatSystem")
+                and ReplicatedStorage.Systems.CombatSystem:FindFirstChild("Network")
+            
+            if combatNetwork then
+                for _, remoteName in ipairs({"FallDamage", "DrownDamage", "EnteredLava"}) do
+                    local realRemote = combatNetwork:FindFirstChild(remoteName)
+                    if realRemote then
+                        local dummy = Instance.new("RemoteEvent")
+                        dummy.Name = remoteName
+                        dummy.Parent = combatNetwork
+                        realRemote:Destroy()
+                    end
+                end
+            end
+        end)
+
+        if godModeConnection then godModeConnection:Disconnect() end
+        godModeConnection = RunService.Heartbeat:Connect(function()
+            local char = LocalPlayer.Character
+            if char and char:FindFirstChild("Humanoid") then
+                local hum = char.Humanoid
+                if hum.MaxHealth ~= 100 then hum.MaxHealth = 100 end
+                if hum.Health < 100 then hum.Health = 100 end
+            end
+        end)
+        notifyToggle("No Fall Damage & God Mode", true)
+    else
+        if godModeConnection then
+            godModeConnection:Disconnect()
+            godModeConnection = nil
+        end
+        notifyToggle("No Fall Damage & God Mode", false)
+    end
+end)
+
+
+-- 6. PLAYER ESP
+local espEnabled = false
+local function addESP(player)
+    if player == LocalPlayer then return end
+    local function applyHighlight(char)
+        if not espEnabled or not char then return end
+        if not char:FindFirstChild("ShadowESP") then
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "ShadowESP"
+            highlight.FillColor = Color3.fromRGB(255, 255, 255)
+            highlight.OutlineColor = Color3.fromRGB(0, 0, 0)
+            highlight.Parent = char
+        end
+        local hrp = char:WaitForChild("HumanoidRootPart", 5)
+        local hum = char:WaitForChild("Humanoid", 5)
+        if hrp and hum and not hrp:FindFirstChild("ShadowHealthTag") then
+            local bb = Instance.new("BillboardGui")
+            bb.Name = "ShadowHealthTag"
+            bb.Size = UDim2.new(0, 100, 0, 30)
+            bb.AlwaysOnTop = true
+            bb.StudsOffset = Vector3.new(0, 3, 0)
+            bb.Parent = hrp
+
+            local txt = Instance.new("TextLabel")
+            txt.Size = UDim2.new(1, 0, 1, 0)
+            txt.BackgroundTransparency = 1
+            txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+            txt.TextStrokeTransparency = 0
+            txt.Font = Enum.Font.GothamBold
+            txt.TextSize = 12
+            txt.Text = player.DisplayName .. " [" .. math.floor(hum.Health) .. "/" .. math.floor(hum.MaxHealth) .. " HP]"
+            txt.Parent = bb
+
+            hum.HealthChanged:Connect(function(newHp)
+                txt.Text = player.DisplayName .. " [" .. math.floor(newHp) .. "/" .. math.floor(hum.MaxHealth) .. " HP]"
+            end)
+        end
+    end
+    if player.Character then applyHighlight(player.Character) end
+    player.CharacterAdded:Connect(applyHighlight)
+end
+
+createToggle(TabUtility, "Player ESP (Shows HP)", function(state)
+    espEnabled = state
+    notifyToggle("Player ESP", state)
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            if state then
+                addESP(p)
+            else
+                if p.Character then
+                    if p.Character:FindFirstChild("ShadowESP") then p.Character.ShadowESP:Destroy() end
+                    local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp and hrp:FindFirstChild("ShadowHealthTag") then hrp.ShadowHealthTag:Destroy() end
+                end
+            end
+        end
+    end
+end)
+
+
+-- 9. TELEPORT TO OTHER PLAYERS
+local TpPlayerFrame = Instance.new("Frame")
+TpPlayerFrame.Size = UDim2.new(1, -6, 0, 65)
+TpPlayerFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TpPlayerFrame.Parent = TabUtility
+Instance.new("UICorner", TpPlayerFrame).CornerRadius = UDim.new(0, 6)
+
+local selectedPlayerIndex = 1
+local TargetPlayerLabel = Instance.new("TextLabel")
+TargetPlayerLabel.Size = UDim2.new(1, -12, 0, 22)
+TargetPlayerLabel.Position = UDim2.new(0, 6, 0, 4)
+TargetPlayerLabel.BackgroundTransparency = 1
+TargetPlayerLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetPlayerLabel.TextSize = 11
+TargetPlayerLabel.Font = Enum.Font.GothamBold
+TargetPlayerLabel.Text = "Select Player: None"
+TargetPlayerLabel.Parent = TpPlayerFrame
+
+local CycleBtn = Instance.new("TextButton")
+CycleBtn.Size = UDim2.new(0, 100, 0, 26)
+CycleBtn.Position = UDim2.new(0, 6, 0, 32)
+CycleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+CycleBtn.Text = "🔄 Next Player"
+CycleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CycleBtn.Font = Enum.Font.GothamMedium
+CycleBtn.TextSize = 10
+CycleBtn.Parent = TpPlayerFrame
+Instance.new("UICorner", CycleBtn).CornerRadius = UDim.new(0, 4)
+
+local TpExecuteBtn = Instance.new("TextButton")
+TpExecuteBtn.Size = UDim2.new(0, 110, 0, 26)
+TpExecuteBtn.Position = UDim2.new(1, -116, 0, 32)
+TpExecuteBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TpExecuteBtn.Text = "🚀 TP To Player"
+TpExecuteBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+TpExecuteBtn.Font = Enum.Font.GothamBold
+TpExecuteBtn.TextSize = 10
+TpExecuteBtn.Parent = TpPlayerFrame
+Instance.new("UICorner", TpExecuteBtn).CornerRadius = UDim.new(0, 4)
+
+local function getOtherPlayers()
+    local list = {}
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then table.insert(list, p) end
+    end
+    return list
+end
+
+CycleBtn.MouseButton1Click:Connect(function()
+    local others = getOtherPlayers()
+    if #others == 0 then
+        TargetPlayerLabel.Text = "Select Player: No Other Players Found"
+        return
+    end
+    selectedPlayerIndex = selectedPlayerIndex + 1
+    if selectedPlayerIndex > #others then selectedPlayerIndex = 1 end
+    TargetPlayerLabel.Text = "Select Player: " .. others[selectedPlayerIndex].DisplayName
+end)
+
+TpExecuteBtn.MouseButton1Click:Connect(function()
+    local others = getOtherPlayers()
+    if #others > 0 and others[selectedPlayerIndex] then
+        local targetP = others[selectedPlayerIndex]
+        if targetP.Character and targetP.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = targetP.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3)
+            sendChatNotification("Teleported to " .. targetP.DisplayName)
+        end
+    end
+end)
+
+
+-- ============================================================
+-- TAB 5: SOCIAL LINKS
+-- ============================================================
+local function createLinkButton(parentPage, labelText, linkUrl)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1, -6, 0, 35)
+    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Btn.Text = labelText
+    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Btn.Font = Enum.Font.GothamMedium
+    Btn.TextSize = 11
+    Btn.Parent = parentPage
+    Instance.new("UICorner", Btn).CornerRadius = UDim.new(0, 6)
+
+    Btn.MouseButton1Click:Connect(function()
+        if setclipboard then
+            setclipboard(linkUrl)
+            Btn.Text = "✅ Link Copied to Clipboard!"
+            task.wait(1.5)
+            Btn.Text = labelText
+        else
+            Btn.Text = linkUrl
+        end
+    end)
+end
+
+createLinkButton(TabLinks, "▶️ Copy Animica YouTube Link", "https://www.youtube.com/@animica")
+createLinkButton(TabLinks, "💬 Copy Grup Wa", "https://chat.whatsapp.com/IneqmdyT8ISH8y505qWPck")
+
+print("✅ [WhoopScript] Fix Lag + Premium UI!")
